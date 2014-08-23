@@ -1,0 +1,33 @@
+#body {
+	min-width: 32px;
+	width: auto;
+	min-height: 32px;
+	overflow-x: hidden;
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	color: #2c3e50;
+	margin: 0;
+	padding: 10px;
+}
+
+#content {
+	margin: 0;
+}
+
+#content p {
+	font-size: 0.8em;
+	margin: 0;
+	line-height: 12px;
+}
+
+#content #url {
+	font-size: 1.2em;
+	margin: 0;
+	margin-bottom: 7px;
+}
+
+#content #error {
+	font-size: 1.2em;
+	margin: 0;
+	margin-bottom: 7px;
+}
