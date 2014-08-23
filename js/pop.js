@@ -9,6 +9,11 @@ var AB = {
 	 */
 	shrink: function (tab) {
 		
+		if (!tab) {
+			AB.error('invalid');
+			return;
+		}
+
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', 'http://api.abird.co/url', true);
 		xhr.setRequestHeader('Content-Type', 'application/json');
@@ -17,7 +22,7 @@ var AB = {
 			if (xhr.readyState === 4 && xhr.status === 200) {
 				AB.populate(JSON.parse(xhr.responseText));
 			} else {
-				AB.error(xhr);
+				AB.error('http');
 			}
 		};
 
@@ -64,16 +69,18 @@ var AB = {
 	 * To keep things clean; separate the error into another function.
 	 * Not much logic here.
 	 */
-	error: function(xhr) {
+	error: function(error) {
 
 		var content = document.getElementById('content'),
 			err = document.createElement('p'),
-			message = document.createElement('p');
-			
+			message = document.createElement('p'),
+			sectionError = 'I only support HTTP and HTTPS pages.';
+
+		sectionError = (error === 'http') ? 'There seems to be a connection problem.' : sectionError;
+
 		err.setAttribute('id', 'error');
-		err.innerHTML = 'We could not fly.';
-		message.innerHTML = "My wings have been cut, please try again later.";
-		// Eventually use xhr.responseText ?
+		err.innerHTML = 'I could not fly.';
+		message.innerHTML = "My wings have been cut, please try again later.<br />" + sectionError;
 
 		while (content.hasChildNodes()) {
 			content.removeChild(content.lastChild);
@@ -89,6 +96,6 @@ var AB = {
 /**
  * Load the popup, inject the content script and get the information we need to fly.
  */
-window.addEventListener('load', function(evt) {
+window.addEventListener('load', function(evt) {	
 	chrome.extension.getBackgroundPage().getCurrentTab(AB.shrink);
 });

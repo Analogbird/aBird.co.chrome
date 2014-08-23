@@ -14,20 +14,20 @@
 	margin: 0;
 }
 
-#content p {
-	font-size: 0.8em;
-	margin: 0;
-	line-height: 12px;
-}
-
-#content #url {
-	font-size: 1.2em;
-	margin: 0;
-	margin-bottom: 7px;
-}
-
-#content #error {
-	font-size: 1.2em;
-	margin: 0;
-	margin-bottom: 7px;
-}
+	#content p {
+		font-size: 0.8em;
+		margin: 0;
+		line-height: 12px;
+	}
+	
+	#content #url {
+		font-size: 1.2em;
+		margin: 0;
+		margin-bottom: 7px;
+	}
+	
+	#content #error {
+		font-size: 1.2em;
+		margin: 0;
+		margin-bottom: 7px;
+	}
