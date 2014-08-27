@@ -19,9 +19,10 @@
 	},
 	"content_scripts": [
 		{
-			"js": [ "js/context.js" ],
+			"js": [ "js/lightbox.js" ],
+			"css": [ "css/lightbox.css" ],
 			"matches": [ "http://*/*", "https://*/*" ],
-			"run_at": "document_start"
+			"run_at": "document_end"
 		}
 	],
 	"permissions": [
