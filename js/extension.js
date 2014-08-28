@@ -53,8 +53,9 @@ var EXT = {
 	 * and populate the popup with the results.
 	 * Voila, all set!
 	 */
-	shrink: function AB$shrink (content, callback) {
+	shrink: function AB$shrink (section, content, callback) {
 
+		console.log(section);
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', EXT.api, true);
 		xhr.setRequestHeader('Content-Type', 'application/json');
@@ -160,20 +161,18 @@ var EXT = {
 			if (EXT.verifyUri(tab.url)) {
 
 				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-					tabs.forEach(function(tab) {
-
-						/**
+					
+					/**
 						 * Send back the information we need to the extension (to itself),
 						 * in this case the URL only.
 						 */
-						chrome.runtime.sendMessage({
-							'url': tab.url
-						});
-					})
+					chrome.runtime.sendMessage({
+						'url': tabs[0].url
+					});
 				});
 
 			} else {
-				EXT.shrink(false);
+				EXT.error('http');
 			}
 
 		});
@@ -190,11 +189,11 @@ var EXT = {
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
 	if (!message) {
-		EXT.error('invalid');
+		EXT.error('http');
 		return true;
 	}
 
-	EXT.shrink({
+	EXT.shrink('tooltip', {
 		data: {
 			type: 'href',
 			value: message.url
@@ -257,7 +256,7 @@ chrome.contextMenus.onClicked.addListener(function contextClicked(info, tab) {
 
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			tabs.forEach(function(tab) {
-				EXT.shrink(content, function(data) {
+				EXT.shrink('context', content, function(data) {
 					chrome.tabs.sendMessage(tab.id, data);
 				});
 			})
