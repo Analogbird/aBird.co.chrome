@@ -8,7 +8,7 @@
 var EXT = {
 
 	document: null,
-	api: 'http://localhost:9025/content',
+	api: 'http://ab.je/content',
 	key: '680e4bec6651c1b7682202b43761f392d633dd99',
 	parseUri: function AB$parseUri (str) {
 		var	o = {
