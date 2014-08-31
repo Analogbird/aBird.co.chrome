@@ -19,9 +19,9 @@
 	},
 	"content_scripts": [
 		{
-			"js": [ "js/lightbox.js" ],
+			"js": [ "js/context.js" ],
 			"matches": [ "http://*/*", "https://*/*" ],
-			"run_at": "document_end"
+			"run_at": "document_start"
 		}
 	],
 	"permissions": [

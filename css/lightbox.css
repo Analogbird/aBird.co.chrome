@@ -1,27 +1,69 @@
-#lightbox_background {
-
-	background-color:rgba(200,200,200,0.5);
-	width:100%;
-	height:100%;
-	position:fixed;
-	z-index:1000;
-	top:0px;
-	left:0px;
-
+@import url(http://fonts.googleapis.com/css?family=Ropa+Sans);
+* { margin:0; padding:0; font-family: "Ropa Sans"; }
+body {
+	color: rgba(44,62,80,1);
+	background-color: transparent;
+	overflow: hidden;
+	font-size: 14px;
+	line-height: 20px;
 }
 
-#lightbox_extension {
-
-	position:fixed;
-	top:0px;
-	left:50%;
-	margin-left:-290px;
-	top:50%;
-	margin-top:-165px;
-	width:580px;
-	height:335px;
-	background-color:white;
-	z-index:1001;
-	padding:50px;
-
+#inset {
+	display: table;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
+
+	#inset_div {
+		display: table-cell;
+		vertical-align: middle;
+	}
+	
+		#container {
+			border-radius: 6px;
+			background-color: rgba(44,62,80,0.7);
+			padding: 6px;
+			margin-bottom: 200px;
+			display: block;
+		}
+
+			#container_div {
+				background-color: #ecf0f1;
+				border-radius: 6px;
+			}
+			
+				#logo {
+					width: 38px;
+					margin: 0 auto;
+					padding: 16px 0 0;
+				}
+			
+				#content {
+					text-align: center;
+					padding: 15px;
+					padding: 6px 0 18px;
+				}
+
+					#content p {
+						font-size: 0.95em;
+						margin: 0;
+						line-height: 12px;
+					}
+
+					#content #error {
+						font-size: 1.5em;
+						margin: 0;
+						margin-bottom: 10px;
+					}
+				
+					#content #url {
+						font-size: 1.65em;
+						color: rgba(44,62,80,1);
+						cursor: pointer;
+						margin: 0;
+						margin-bottom: 10px;
+						line-height: 25px;
+					}

@@ -55,7 +55,6 @@ var EXT = {
 	 */
 	shrink: function AB$shrink (section, content, callback) {
 
-		console.log(section);
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', EXT.api, true);
 		xhr.setRequestHeader('Content-Type', 'application/json');
@@ -91,15 +90,14 @@ var EXT = {
 			clipboard = document.createElement('p');
 
 		url.setAttribute('id', 'url');
-		url.innerHTML = data.uri;
-		reduced.innerHTML = 'Size reduction: ' + data.shrank.percent + '%';
+		url.innerHTML = data.url;
+		reduced.innerHTML = 'Reduced by: ' + data.shrank.percent + '%';
 		clipboard.innerHTML = "(Copied, just paste)";
 
 		while (content.hasChildNodes()) {
 			content.removeChild(content.lastChild);
 		}
 
-		EXT.document.getElementById('body').style.width = '140px';
 		content.appendChild(url);
 		content.appendChild(reduced);
 		content.appendChild(clipboard);
@@ -161,13 +159,14 @@ var EXT = {
 			if (EXT.verifyUri(tab.url)) {
 
 				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-					
+
 					/**
-						 * Send back the information we need to the extension (to itself),
-						 * in this case the URL only.
-						 */
+					 * Send back the information we need to the extension (to itself),
+					 * in this case the URL only.
+					 */
 					chrome.runtime.sendMessage({
-						'url': tabs[0].url
+						from: 'tooltip',
+						url: tabs[0].url
 					});
 				});
 
@@ -190,19 +189,28 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
 	if (!message) {
 		EXT.error('http');
-		return true;
-	}
+	} else {
 
-	EXT.shrink('tooltip', {
-		data: {
-			type: 'href',
-			value: message.url
+		if (message.from === 'tooltip') {
+			EXT.shrink('tooltip', {
+				data: {
+					type: 'url',
+					value: message.url
+				}
+			});	
+		} else if (message.from === 'context') {
+			chrome.storage.local.get('aBirdData', function(stored) {
+
+				EXT.shrink('context', stored.aBirdData, function(shortened) {
+					sendResponse(shortened);
+					chrome.storage.local.remove('aBirdData');
+				});
+			});
 		}
-	});
+	}
 
 	return true;
 });
-
 
 /**
  * Once the extension is installed,
@@ -231,36 +239,37 @@ chrome.runtime.onInstalled.addListener(function() {
 chrome.contextMenus.onClicked.addListener(function contextClicked(info, tab) {
 
 	if (tab && info.menuItemId === "aBird.co") {
+
 		var content = {
-			page: {
+			meta: {
 				url: tab.url || info.pageUrl || '',
-				favicon: tab.favIconUrl || '',
-				title: tab.title || ''
+				title: tab.title || '',
+				favicon: tab.favIconUrl || ''
 			},
 			data: {
-				type: 'href',
+				type: 'url',
 				value: tab.url || info.pageUrl || ''
 			}
 		};
 
 		if (info.mediaType === "image") {
 			content.data.type = 'img';
-			content.data.value = encodeURI(info.srcUrl);
+			content.data.value = info.srcUrl;
 		} else if (info.linkUrl) {
-			content.data.type = 'href';
+			content.data.type = 'url';
 			content.data.value = info.linkUrl;
 		} else if (info.selectionText) {
 			content.data.type = 'txt';
-			content.data.value = encodeURI(info.selectionText);
+			content.data.value = info.selectionText;
 		}
 
+		chrome.storage.local.set({ aBirdData: content });
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			tabs.forEach(function(tab) {
-				EXT.shrink('context', content, function(data) {
-					chrome.tabs.sendMessage(tab.id, data);
-				});
+				chrome.tabs.sendMessage(tab.id, content);
 			})
 		});
+
 	}
 
 });

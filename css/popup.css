@@ -1,33 +1,30 @@
+@import url(http://fonts.googleapis.com/css?family=Ropa+Sans);
+* { font-family: "Ropa Sans"; }
 #body {
 	min-width: 32px;
-	width: auto;
+	width: 170px;
 	min-height: 32px;
 	overflow-x: hidden;
-	font-family: Arial, sans-serif;
 	font-size: 14px;
 	color: #2c3e50;
 	margin: 0;
-	padding: 10px;
+	padding: 20px 0px;
 }
 
 #content {
 	margin: 0;
+	text-align: center;
 }
 
 	#content p {
-		font-size: 0.8em;
+		font-size: 0.85em;
 		margin: 0;
 		line-height: 12px;
 	}
 	
-	#content #url {
-		font-size: 1.2em;
-		margin: 0;
-		margin-bottom: 7px;
-	}
-	
+	#content #url,
 	#content #error {
-		font-size: 1.2em;
+		font-size: 1.5em;
 		margin: 0;
-		margin-bottom: 7px;
+		margin-bottom: 10px;
 	}
