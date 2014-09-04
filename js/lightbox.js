@@ -1,46 +1,72 @@
-/**
- * Load the lighbox and get the information we need to fly from background.js.
- */
-window.addEventListener('load', function() {
 
-	chrome.extension.sendMessage({
-		from: 'context'
-	}, function(response) {
-		
-		var content = document.getElementById('content'),
-			url = document.createElement('p'),
-			reduced = document.createElement('p'),
-			clipboard = document.createElement('p'),
-			range = document.createRange(),
-			selection = window.getSelection();
+var LGX = {
+	
+	show: function overlay$show () {
 
-		url.innerHTML = response.url;
-		url.setAttribute('id', "url");
-		url.setAttribute('href', response.url);
-		url.setAttribute('target', '_blank');
-		reduced.innerHTML = 'Reduced by: ' + response.shrank.percent + '%';
-		clipboard.innerHTML = "(Copied, just paste)";
+		var style = document.createElement('style'),
+			div = document.createElement('div'),
+			height = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight),
+			overlayWidth = 424,
+			left = Math.floor((window.innerWidth - overlayWidth) / 2),
+			top = scrollY,
+			iframe = document.createElement('iframe');
 
-		while (content.hasChildNodes()) {
-			content.removeChild(content.lastChild);
+		style.setAttribute('id', 'birdsOverlay');
+		style.appendChild(document.createTextNode('body { height: 100%; overflow: hidden; };'));
+		document.head.appendChild(style);
+
+		div.setAttribute('id', 'birdsOverlayDiv');
+		div.setAttribute('style', 'position:absolute;top:0px;left:0px;width:100%;height:' + height + 'px;z-index: 16777270;background-color:#000;opacity: 0.35;');
+
+		div.onclick = function() {
+			LGX.hide();
 		}
 
-		url.onclick = function () {
-			var win = window.open(response.url, '_blank');
-			win.focus();
-		};
+		document.body.insertBefore(div, document.body.firstChild);
 
-		content.appendChild(url);
-		content.appendChild(reduced);
-		content.appendChild(clipboard);
+		LGX.lastKey = window.onkeyup;
+		window.onkeyup = function(e) {
+			if (e.keyCode == 27) {
+				window.onkeyup = null;
+				LGX.hide();
+			}
+		}
 
-		range.selectNodeContents(url);
-		selection.removeAllRanges();
-		selection.addRange(range);
+		iframe.setAttribute('id', 'birdsOverlayFrame');
+		iframe.setAttribute('frameborder', '0');
+		iframe.setAttribute('allowTransparency', 'true');
+		iframe.setAttribute('scrolling', 'no');
+		iframe.setAttribute('src', chrome.extension.getURL('lightbox.html'));
+		iframe.setAttribute('style', 'border:none;width:' + overlayWidth + 'px;height:' + window.innerHeight + 'px;position:absolute;top:' + top + 'px;left:' + left + 'px;z-index:16777271;background-color:transparent;');
 
-		document.execCommand("Copy", false, null);
-		window.getSelection().removeAllRanges();
+		document.body.insertBefore(iframe, document.body.firstChild);
+	},
 
-	});
+	hide: function overlay$hide () {
+
+		var style = document.getElementById('birdsOverlay');
+		var div = document.getElementById('birdsOverlayDiv');
+		var iframe = document.getElementById('birdsOverlayFrame');
+		if (style || div || iframe) {
+			style.parentNode.removeChild(style);
+			div.parentNode.removeChild(div);
+			iframe.parentNode.removeChild(iframe);
+		}
+
+		if (LGX.lastKey) {
+			window.onkeyup = LGX.lastKey;
+		} else {
+			window.onkeyup = null;
+		}
+
+	}
+
+};
+
+
+chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
+
+	LGX.show(message);
+	sendResponse({overlay: true});
 
 });
