@@ -8,8 +8,8 @@
 var EXT = {
 
 	document: null,
-	api: 'http://api.abird.co/content',
-	key: 'f0c73000da767d3a66219acc67403e9007581760',
+	api: 'http://localhost:9025/content',
+	key: '680e4bec6651c1b7682202b43761f392d633dd99',
 	parseUri: function AB$parseUri (str) {
 		var	o = {
 				strictMode: false,
