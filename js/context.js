@@ -1,6 +1,6 @@
 
 var CXT = {
-	
+
 	show: function overlay$show () {
 
 		var style = document.createElement('style'),

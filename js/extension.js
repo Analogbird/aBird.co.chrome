@@ -1,6 +1,6 @@
 /**
  * Put all our stuff in a safe place.
- * 
+ *
  * parseUri 1.2.2
  * (c) Steven Levithan <stevenlevithan.com>
  * MIT License
@@ -188,7 +188,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 					type: 'url',
 					value: message.url
 				}
-			});	
+			});
 		} else if (message.from === 'context') {
 			chrome.storage.local.get('aBirdData', function(stored) {
 

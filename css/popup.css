@@ -16,15 +16,15 @@
 	text-align: center;
 }
 
-	#content p {
-		font-size: 0.85em;
-		margin: 0;
-		line-height: 12px;
-	}
-	
-	#content #url,
-	#content #error {
-		font-size: 1.5em;
-		margin: 0;
-		margin-bottom: 10px;
-	}
+#content p {
+	font-size: 0.85em;
+	margin: 0;
+	line-height: 12px;
+}
+
+#content #url,
+#content #error {
+	font-size: 1.5em;
+	margin: 0;
+	margin-bottom: 10px;
+}
