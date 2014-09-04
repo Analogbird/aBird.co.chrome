@@ -1,7 +1,7 @@
 {
 	"name": "aBird.co",
 	"short_name": "aBird.co",
-	"version": "1.4",
+	"version": "2.1",
 	"author": "Stefan Aichholzer - Analogbird B.V.",
 	"manifest_version": 2,
 	"minimum_chrome_version": "26",
@@ -10,7 +10,7 @@
 		"48": "img/icon_48x48.png",
 		"16": "img/icon_16x16.png"
 	},
-	"description": "The world's most awesome URL shortening service.",
+	"description": "The world's most awesome content shortening service.",
 	"background": {
 		"scripts": [
 			"js/extension.js"

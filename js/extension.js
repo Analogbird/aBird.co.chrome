@@ -8,8 +8,8 @@
 var EXT = {
 
 	document: null,
-	api: 'http://localhost:9025/content',
-	key: '680e4bec6651c1b7682202b43761f392d633dd99',
+	api: 'http://api.abird.co/content',
+	key: 'f0c73000da767d3a66219acc67403e9007581760',
 	parseUri: function AB$parseUri (str) {
 		var	o = {
 				strictMode: false,
@@ -105,6 +105,9 @@ var EXT = {
 		url.contentEditable = true;
 		url.unselectable = "off";
 		url.focus();
+		EXT.document.execCommand('SelectAll');
+		EXT.document.execCommand("Copy", false, null);
+		url.blur();
 
 	},
 
@@ -123,7 +126,7 @@ var EXT = {
 
 		err.setAttribute('id', 'error');
 		err.innerHTML = 'I could not fly.';
-		message.innerHTML = "My wings have been cut, please try again later.<br />" + sectionError;
+		message.innerHTML = "Please try again later.<br />" + sectionError;
 
 		while (content.hasChildNodes()) {
 			content.removeChild(content.lastChild);
@@ -140,18 +143,6 @@ var EXT = {
 	 * active tab.
 	 */
 	currentTab: function AB$currentTab (document) {
-
-		/**
-		 * This fixes an error where the text appears selected
-		 * and it's not nice UI.
-		 */
-		document.addEventListener('focus', function(e) {
-	
-			EXT.document.execCommand('SelectAll');
-			EXT.document.execCommand("Copy", false, null);
-			document.getElementById(e.srcElement.id).blur();
-	
-		}, true);
 
 		chrome.tabs.getSelected(null, function(tab) {
 

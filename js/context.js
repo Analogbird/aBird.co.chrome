@@ -6,8 +6,9 @@ var CXT = {
 		var style = document.createElement('style'),
 			div = document.createElement('div'),
 			height = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight),
+			width = Math.max(document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth),
 			overlayWidth = 230,
-			left = Math.floor((window.innerWidth - overlayWidth) / 2),
+			left = Math.floor((window.innerWidth - overlayWidth) / 2) + scrollX,
 			top = scrollY,
 			iframe = document.createElement('iframe');
 
@@ -16,8 +17,13 @@ var CXT = {
 		document.head.appendChild(style);
 
 		div.setAttribute('id', 'birdsOverlayDiv');
-		div.setAttribute('style', 'position:absolute;top:0px;left:0px;width:100%;height:' + height + 'px;z-index: 16777270;background-color:#2c3e50;opacity:0.50;');
-		
+		div.setAttribute('style', 'position:absolute;top:0px;left:0px;width:' + width + 'px;height:' + height + 'px;z-index:19800601;background-color:#2c3e50;opacity:0.50;');
+
+		// Close the overlay in case a right click happens over it.
+		div.addEventListener('contextmenu', function() {
+			CXT.hide();
+		});
+
 		div.onclick = function() { CXT.hide(); }
 		iframe.onclick = function() { CXT.hide(); }
 
@@ -36,7 +42,7 @@ var CXT = {
 		iframe.setAttribute('allowTransparency', 'true');
 		iframe.setAttribute('scrolling', 'no');
 		iframe.setAttribute('src', chrome.extension.getURL('lightbox.html'));
-		iframe.setAttribute('style', 'border:none;width:' + overlayWidth + 'px;height:' + window.innerHeight + 'px;position:absolute;top:' + top + 'px;left:' + left + 'px;z-index:16777271;background-color:transparent;');
+		iframe.setAttribute('style', 'border:none;width:' + overlayWidth + 'px;height:' + window.innerHeight + 'px;position:absolute;top:' + top + 'px;left:' + left + 'px;z-index:19800610;background-color:transparent;');
 
 		document.body.insertBefore(iframe, document.body.firstChild);
 	},
