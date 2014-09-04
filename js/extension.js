@@ -60,17 +60,19 @@ var EXT = {
 		xhr.setRequestHeader('Content-Type', 'application/json');
 
 		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				if (callback) {
-					callback(JSON.parse(xhr.responseText));
-				} else {
-					EXT.populate(JSON.parse(xhr.responseText));
-				}
-			} else if (xhr.readyState === 4 && xhr.status !== 200) {
-				if (callback) {
-					callback({ error: true });
-				} else {
-					EXT.error('http');
+			if (xhr.readyState === 4) {	
+				if (xhr.status === 200) {
+					if (callback) {
+						callback(JSON.parse(xhr.responseText));
+					} else {
+						EXT.populate(JSON.parse(xhr.responseText));
+					}
+				} else if (xhr.status !== 200) {
+					if (callback) {
+						callback({ error: true });
+					} else {
+						EXT.error('http');
+					}
 				}
 			}
 		};
