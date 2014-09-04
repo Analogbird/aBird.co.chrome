@@ -8,8 +8,8 @@
 var EXT = {
 
 	document: null,
-	api: 'http://ab.je/content',
-	key: '680e4bec6651c1b7682202b43761f392d633dd99',
+	api: 'http://api.abird.co/content',
+	key: 'f0c73000da767d3a66219acc67403e9007581760',
 	parseUri: function AB$parseUri (str) {
 		var	o = {
 				strictMode: false,
@@ -53,7 +53,7 @@ var EXT = {
 	 * and populate the popup with the results.
 	 * Voila, all set!
 	 */
-	shrink: function AB$shrink (section, content, callback) {
+	shrink: function AB$shrink (content, callback) {
 
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', EXT.api, true);
@@ -90,14 +90,15 @@ var EXT = {
 			clipboard = document.createElement('p');
 
 		url.setAttribute('id', 'url');
-		url.innerHTML = data.url;
-		reduced.innerHTML = 'Reduced by: ' + data.shrank.percent + '%';
+		url.innerHTML = data.uri;
+		reduced.innerHTML = 'Size reduction: ' + data.shrank.percent + '%';
 		clipboard.innerHTML = "(Copied, just paste)";
 
 		while (content.hasChildNodes()) {
 			content.removeChild(content.lastChild);
 		}
 
+		EXT.document.getElementById('body').style.width = '140px';
 		content.appendChild(url);
 		content.appendChild(reduced);
 		content.appendChild(clipboard);
@@ -105,6 +106,9 @@ var EXT = {
 		url.contentEditable = true;
 		url.unselectable = "off";
 		url.focus();
+		EXT.document.execCommand('SelectAll');
+		EXT.document.execCommand("Copy", false, null);
+		url.blur();
 
 	},
 
@@ -123,7 +127,7 @@ var EXT = {
 
 		err.setAttribute('id', 'error');
 		err.innerHTML = 'I could not fly.';
-		message.innerHTML = "My wings have been cut, please try again later.<br />" + sectionError;
+		message.innerHTML = "Please try again later.<br />" + sectionError;
 
 		while (content.hasChildNodes()) {
 			content.removeChild(content.lastChild);
@@ -141,37 +145,26 @@ var EXT = {
 	 */
 	currentTab: function AB$currentTab (document) {
 
-		/**
-		 * This fixes an error where the text appears selected
-		 * and it's not nice UI.
-		 */
-		document.addEventListener('focus', function(e) {
-	
-			EXT.document.execCommand('SelectAll');
-			EXT.document.execCommand("Copy", false, null);
-			document.getElementById(e.srcElement.id).blur();
-	
-		}, true);
-
 		chrome.tabs.getSelected(null, function(tab) {
 
 			EXT.document = document;
 			if (EXT.verifyUri(tab.url)) {
 
 				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+					tabs.forEach(function(tab) {
 
-					/**
-					 * Send back the information we need to the extension (to itself),
-					 * in this case the URL only.
-					 */
-					chrome.runtime.sendMessage({
-						from: 'tooltip',
-						url: tabs[0].url
-					});
+						/**
+						 * Send back the information we need to the extension (to itself),
+						 * in this case the URL only.
+						 */
+						chrome.runtime.sendMessage({
+							'url': tab.url
+						});
+					})
 				});
 
 			} else {
-				EXT.error('http');
+				EXT.shrink(false);
 			}
 
 		});
@@ -188,29 +181,20 @@ var EXT = {
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
 	if (!message) {
-		EXT.error('http');
-	} else {
-
-		if (message.from === 'tooltip') {
-			EXT.shrink('tooltip', {
-				data: {
-					type: 'url',
-					value: message.url
-				}
-			});	
-		} else if (message.from === 'context') {
-			chrome.storage.local.get('aBirdData', function(stored) {
-
-				EXT.shrink('context', stored.aBirdData, function(shortened) {
-					sendResponse(shortened);
-					chrome.storage.local.remove('aBirdData');
-				});
-			});
-		}
+		EXT.error('invalid');
+		return true;
 	}
+
+	EXT.shrink({
+		data: {
+			type: 'href',
+			value: message.url
+		}
+	});
 
 	return true;
 });
+
 
 /**
  * Once the extension is installed,
@@ -239,37 +223,36 @@ chrome.runtime.onInstalled.addListener(function() {
 chrome.contextMenus.onClicked.addListener(function contextClicked(info, tab) {
 
 	if (tab && info.menuItemId === "aBird.co") {
-
 		var content = {
-			meta: {
+			page: {
 				url: tab.url || info.pageUrl || '',
-				title: tab.title || '',
-				favicon: tab.favIconUrl || ''
+				favicon: tab.favIconUrl || '',
+				title: tab.title || ''
 			},
 			data: {
-				type: 'url',
+				type: 'href',
 				value: tab.url || info.pageUrl || ''
 			}
 		};
 
 		if (info.mediaType === "image") {
 			content.data.type = 'img';
-			content.data.value = info.srcUrl;
+			content.data.value = encodeURI(info.srcUrl);
 		} else if (info.linkUrl) {
-			content.data.type = 'url';
+			content.data.type = 'href';
 			content.data.value = info.linkUrl;
 		} else if (info.selectionText) {
 			content.data.type = 'txt';
-			content.data.value = info.selectionText;
+			content.data.value = encodeURI(info.selectionText);
 		}
 
-		chrome.storage.local.set({ aBirdData: content });
 		chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			tabs.forEach(function(tab) {
-				chrome.tabs.sendMessage(tab.id, content);
+				EXT.shrink(content, function(data) {
+					chrome.tabs.sendMessage(tab.id, data);
+				});
 			})
 		});
-
 	}
 
 });
