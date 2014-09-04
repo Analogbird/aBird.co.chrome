@@ -1,7 +1,7 @@
 {
 	"name": "aBird.co",
 	"short_name": "aBird.co",
-	"version": "2.1.2",
+	"version": "2.1.3",
 	"author": "Stefan Aichholzer - Analogbird B.V.",
 	"manifest_version": 2,
 	"minimum_chrome_version": "26",
