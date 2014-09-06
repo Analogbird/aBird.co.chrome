@@ -80,6 +80,26 @@ var EXT = {
 		content.key = EXT.key;
 		xhr.send(JSON.stringify(content));
 	},
+	
+	shareButton: function AB$shareButton (service, url, popupWidth, popupheight) {
+
+		var shareButton = document.createElement('a');
+
+		shareButton.setAttribute('href', url);
+		shareButton.onclick = function() {
+			var width = popupWidth,
+				height = popupheight,
+				left = (window.screen.availWidth  - width)  / 2,
+				top = (window.screen.availHeight - height) / 2,
+				opts = 'status=1,width=' + width  + ',height=' + height + ',top=' + top + ',left=' + left;
+
+			window.open(this.href, service, opts);
+			return false;
+		};
+		shareButton.innerHTML = '<i class="fa fa-' + service + '-square fa-lg"></i>';
+		
+		return shareButton;
+	},
 
 	/**
 	 * This just helps the content to be placed and copied to the clipboard
@@ -90,6 +110,8 @@ var EXT = {
 			url = document.createElement('p'),
 			reduced = document.createElement('p'),
 			clipboard = document.createElement('p');
+
+		clipboard.setAttribute('id', 'copy');
 
 		url.setAttribute('id', 'url');
 		url.innerHTML = data.url;
@@ -103,6 +125,9 @@ var EXT = {
 		content.appendChild(url);
 		content.appendChild(reduced);
 		content.appendChild(clipboard);
+		content.appendChild(this.shareButton('twitter', 'https://twitter.com/share?url=' + encodeURIComponent(data.url) + '&count=none&text=' + encodeURIComponent('I just used the #fast & #awesome http://aBird.co #service to reduce this url:') + '&related=AnalogBird_&via=aBirdCo', 550, 256));
+		content.appendChild(this.shareButton('google-plus', 'https://plus.google.com/share?url=' + encodeURIComponent(data.url) + '&hl=en-US', 550, 500));
+		content.appendChild(this.shareButton('linkedin', 'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(data.url) + '&mini=true&title=' + encodeURIComponent('Content shortened using aBird.co') + '&summary=' + encodeURIComponent('I just used the #fast & #awesome http://aBird.co #service to reduce a url.'), 550, 480));
 
 		url.contentEditable = true;
 		url.unselectable = "off";

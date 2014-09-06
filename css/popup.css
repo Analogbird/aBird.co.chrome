@@ -3,7 +3,7 @@
 #body {
 	min-width: 32px;
 	width: 170px;
-	height: 42px;
+	height: 76px;
 	overflow-x: hidden;
 	font-size: 14px;
 	color: #2c3e50;
@@ -22,9 +22,39 @@
 	line-height: 12px;
 }
 
+#content #copy {
+	margin-bottom: 15px;
+}
+
 #content #url,
 #content #error {
 	font-size: 1.5em;
 	margin: 0;
 	margin-bottom: 10px;
+}
+
+.fa-facebook-square, .fa-twitter-square, .fa-google-plus-square, .fa-linkedin-square, .fa-reddit-square {
+	cursor: pointer;
+	margin: 0 2px;
+	color: #2c3e50;
+}
+
+.fa-facebook-square:hover {
+	color: rgba(59,89,152,1);
+}
+
+.fa-twitter-square:hover {
+	color: rgba(64,153,255,1);
+}
+
+.fa-google-plus-square:hover {
+	color: rgba(211,72,54,1);
+}
+
+.fa-linkedin-square:hover {
+	color: rgba(0,123,182,1);
+}
+
+.fa-reddit-square:hover {
+	color: rgba(255,69,0,1);
 }
