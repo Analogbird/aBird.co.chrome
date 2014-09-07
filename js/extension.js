@@ -54,7 +54,7 @@ var EXT = {
 	 * Voila, all set!
 	 */
 	shrink: function AB$shrink (section, content, callback) {
-
+		
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', EXT.api, true);
 		xhr.setRequestHeader('Content-Type', 'application/json');
@@ -79,6 +79,7 @@ var EXT = {
 
 		content.key = EXT.key;
 		xhr.send(JSON.stringify(content));
+
 	},
 	
 	shareButton: function AB$shareButton (service, url, popupWidth, popupheight) {
@@ -104,7 +105,7 @@ var EXT = {
 	/**
 	 * This just helps the content to be placed and copied to the clipboard
 	 */
-	populate: function AB$populate (data, content) {
+	populate: function AB$populate (data) {
 
 		var content = EXT.document.getElementById('content'),
 			url = document.createElement('p'),
@@ -125,9 +126,10 @@ var EXT = {
 		content.appendChild(url);
 		content.appendChild(reduced);
 		content.appendChild(clipboard);
-		content.appendChild(this.shareButton('twitter', 'https://twitter.com/share?url=' + encodeURIComponent(data.url) + '&count=none&text=' + encodeURIComponent('I just used the #fast & #awesome http://aBird.co #service to reduce this url:') + '&related=AnalogBird_&via=aBirdCo', 550, 256));
+		content.appendChild(this.shareButton('facebook', 'http://www.facebook.com/sharer.php?u=' + encodeURIComponent(data.url), 550, 400));
+		content.appendChild(this.shareButton('twitter', 'https://twitter.com/share?url=' + encodeURIComponent(data.url) + '&count=none&text=' + encodeURIComponent('I just used the #fast & #awesome @aBirdCo Chrome #extension to shrink and reduce some content.') + '&related=AnalogBird_', 550, 256));
 		content.appendChild(this.shareButton('google-plus', 'https://plus.google.com/share?url=' + encodeURIComponent(data.url) + '&hl=en-US', 550, 500));
-		content.appendChild(this.shareButton('linkedin', 'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(data.url) + '&mini=true&title=' + encodeURIComponent('Content shortened using aBird.co') + '&summary=' + encodeURIComponent('I just used the #fast & #awesome http://aBird.co #service to reduce a url.'), 550, 480));
+		content.appendChild(this.shareButton('linkedin', 'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(data.url) + '&mini=true&title=' + encodeURIComponent('Content shortened using aBird.co') + '&summary=' + encodeURIComponent('I just used the fast & awesome http://aBird.co Chrome extension to shrink and reduce some content.'), 550, 480));
 
 		url.contentEditable = true;
 		url.unselectable = "off";
@@ -217,6 +219,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 				}
 			});
 		} else if (message.from === 'context') {
+
 			chrome.storage.local.get('aBirdData', function(stored) {
 
 				EXT.shrink('context', stored.aBirdData, function(shortened) {
