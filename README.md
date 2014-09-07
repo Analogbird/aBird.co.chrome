@@ -11,16 +11,3 @@ The official extension is available on the [Google Play](https://chrome.google.c
 
 Any contributors willing to write (and maintain) versions for other browsers? Get in touch. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-

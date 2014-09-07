@@ -1,6 +1,6 @@
 /**
  * Put all our stuff in a safe place.
- * 
+ *
  * parseUri 1.2.2
  * (c) Steven Levithan <stevenlevithan.com>
  * MIT License
@@ -8,8 +8,8 @@
 var EXT = {
 
 	document: null,
-	api: 'http://localhost:9025/content',
-	key: '680e4bec6651c1b7682202b43761f392d633dd99',
+	api: 'http://api.abird.co/content',
+	key: 'f0c73000da767d3a66219acc67403e9007581760',
 	parseUri: function AB$parseUri (str) {
 		var	o = {
 				strictMode: false,
@@ -54,7 +54,7 @@ var EXT = {
 	 * Voila, all set!
 	 */
 	shrink: function AB$shrink (section, content, callback) {
-
+		
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', EXT.api, true);
 		xhr.setRequestHeader('Content-Type', 'application/json');
@@ -79,17 +79,40 @@ var EXT = {
 
 		content.key = EXT.key;
 		xhr.send(JSON.stringify(content));
+
+	},
+	
+	shareButton: function AB$shareButton (service, url, popupWidth, popupheight) {
+
+		var shareButton = document.createElement('a');
+
+		shareButton.setAttribute('href', url);
+		shareButton.onclick = function() {
+			var width = popupWidth,
+				height = popupheight,
+				left = (window.screen.availWidth  - width)  / 2,
+				top = (window.screen.availHeight - height) / 2,
+				opts = 'status=1,width=' + width  + ',height=' + height + ',top=' + top + ',left=' + left;
+
+			window.open(this.href, service, opts);
+			return false;
+		};
+		shareButton.innerHTML = '<i class="fa fa-' + service + '-square fa-lg"></i>';
+		
+		return shareButton;
 	},
 
 	/**
 	 * This just helps the content to be placed and copied to the clipboard
 	 */
-	populate: function AB$populate (data, content) {
+	populate: function AB$populate (data) {
 
 		var content = EXT.document.getElementById('content'),
 			url = document.createElement('p'),
 			reduced = document.createElement('p'),
 			clipboard = document.createElement('p');
+
+		clipboard.setAttribute('id', 'copy');
 
 		url.setAttribute('id', 'url');
 		url.innerHTML = data.url;
@@ -103,6 +126,10 @@ var EXT = {
 		content.appendChild(url);
 		content.appendChild(reduced);
 		content.appendChild(clipboard);
+		content.appendChild(this.shareButton('facebook', 'http://www.facebook.com/sharer.php?u=' + encodeURIComponent(data.url), 550, 400));
+		content.appendChild(this.shareButton('twitter', 'https://twitter.com/share?url=' + encodeURIComponent(data.url) + '&count=none&text=' + encodeURIComponent('I just used the #fast & #awesome @aBirdCo Chrome #extension to shrink and reduce some content.') + '&related=AnalogBird_', 550, 256));
+		content.appendChild(this.shareButton('google-plus', 'https://plus.google.com/share?url=' + encodeURIComponent(data.url) + '&hl=en-US', 550, 500));
+		content.appendChild(this.shareButton('linkedin', 'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(data.url) + '&mini=true&title=' + encodeURIComponent('Content shortened using aBird.co') + '&summary=' + encodeURIComponent('I just used the fast & awesome http://aBird.co Chrome extension to shrink and reduce some content.'), 550, 480));
 
 		url.contentEditable = true;
 		url.unselectable = "off";
@@ -190,8 +217,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 					type: 'url',
 					value: message.url
 				}
-			});	
+			});
 		} else if (message.from === 'context') {
+
 			chrome.storage.local.get('aBirdData', function(stored) {
 
 				EXT.shrink('context', stored.aBirdData, function(shortened) {

@@ -1,0 +1,7 @@
+
+ - Extension line 219; send back EXT
+   On the lightbox response do the logic as expected.
+   
+ - Put the social icons into the lightbox
+ 
+ - Fix FB issues.
